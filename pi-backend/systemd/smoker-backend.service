@@ -1,0 +1,12 @@
+[Unit]
+Description=CherrySmoked Flask Backend
+After=network.target
+
+[Service]
+User=juliusjj25
+WorkingDirectory=/home/juliusjj25/smoker-backend
+ExecStart=/home/juliusjj25/smoker-backend/start.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

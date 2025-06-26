@@ -1,0 +1,45 @@
+# Default HTTP redirect to HTTPS
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+
+    return 301 https://$host$request_uri;
+}
+
+# Redirect for your domain (also HTTP to HTTPS)
+server {
+    listen 80;
+    listen [::]:80;
+    server_name cherrysmoked.duckdns.org;
+
+    return 301 https://$host$request_uri;
+}
+
+# HTTPS server for your Flask app
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl ipv6only=on;
+    server_name cherrysmoked.duckdns.org;
+
+    ssl_certificate /etc/letsencrypt/live/cherrysmoked.duckdns.org/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/cherrysmoked.duckdns.org/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Serve frontend files
+    root /home/juliusjj25/smoker-backend/templates;
+    index index.html;
+
+    # Proxy to Flask app
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

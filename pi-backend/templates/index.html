@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SmokerMaster3000</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" type="image/png" href="/favicon.png" sizes="64x64">
+  <style>
+    body { padding: 2rem; background-color: #121212; color: #fff; }
+    .card { margin-bottom: 1rem; background-color: #1f1f1f; border-color: #333; }
+    .target-input {
+      background-color: #2a2a2a;
+      border: 1px solid #444;
+      color: #fff;
+      width: 80px;
+      font-size: 0.9rem;
+      padding: 2px 4px;
+    }
+    .table td input {
+      margin: auto;
+      display: block;
+    }
+	table, 
+	table th, 
+	table td {
+	  background-color: #1f1f1f !important;
+	  color: #ffffff !important;
+	  border-color: #333 !important;
+	}
+
+	thead th {
+	  background-color: #1f1f1f !important;
+	  color: #cccccc !important;
+	  font-size: 1.5rem !important;
+	}
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: inner-spin-button;
+      background-color: #2a2a2a;
+      color: #fff;
+      border: none;
+    }
+    input[type=number]:hover::-webkit-inner-spin-button {
+      background-color: #3a3a3a;
+    }
+    .disconnected { color: #888 !important; opacity: 0.6; }
+    .text-end { text-align: right; }
+    .text-start { text-align: left; }
+    td, th { white-space: nowrap; vertical-align: middle !important; height: 3.5rem; }
+	th:nth-child(1),
+	td:nth-child(1) {
+	  width: 30%;
+	  text-align: left;
+	}
+
+	th:nth-child(2),
+	td:nth-child(2) {
+	  width: 25%;
+	  text-align: left;
+	}
+
+	th:nth-child(3),
+	td:nth-child(3) {
+	  width: 25%;
+	  text-align: right;
+	}
+
+	th:nth-child(4),
+	td:nth-child(4) {
+	  width: 20%;
+	  text-align: center;
+	}
+	
+    .status-bubble {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #2a2a2a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.6rem;
+	  margin-left: auto;
+      margin-right: 0;
+    }
+    .status-bubble::before {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      right: 4px;
+      bottom: 4px;
+      border-radius: 50%;
+      background: conic-gradient(red 0%, #444 0%);
+      z-index: 0;
+    }
+    .status-bubble span {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">
+      <img src="/favicon.png" alt="SM3k Logo" style="height: 1.5em; vertical-align: middle; margin-right: 0.5em;">
+    </h1>
+    <form class="row g-2 align-items-center" onsubmit="return false;">
+      <div class="col-auto">
+        <input type="text" id="logFilename" class="form-control form-control-sm" placeholder="" />
+      </div>
+      <div class="col-auto">
+        <button type="button" id="startLogging" class="btn btn-sm btn-primary" title="Start"><i class="bi bi-play-fill"></i></button>
+      </div>
+      <div class="col-auto">
+        <button type="button" id="stopLogging" class="btn btn-sm btn-danger" title="Stop"><i class="bi bi-stop-fill"></i></button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <table class="table table-hover align-middle text-center">
+        <thead>
+          <tr>
+            <th class="text-start">Sensor</th>
+            <th class="text-start">Status</th>
+            <th class="text-end">Current</th>
+            <th>Target</th>
+          </tr>
+        </thead>
+        <tbody id="tempTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <div class="card-body">
+      <canvas id="tempChart" style="width: 100%; height="200px;"></canvas>
+    </div>
+  </div>
+  
+  <div class="row">
+	  <div class="col-md-6">
+		  <div class="card">
+			<div class="card-body">
+			  <h5 class="card-title">Log Files</h5>
+			  <div id="logTable">Loading logs...</div>
+			</div>
+		  </div>
+	  </div>
+	  <div class="col-md-6">
+		  <div class="card">
+			<div class="card-body">
+			  <h5 class="card-title">System Status</h5>
+			  <table class="table mb-0">
+				<tbody>
+				  <tr>
+					<td class="text-start">CPU Usage</td>
+				    <td><span id="piCpu">--%</span></td>
+				    <td class="text-end"><div class="status-bubble" id="cpuBubble"><span>--</span></div></td>
+				  </tr>
+				  <tr>
+				    <td class="text-start">Memory Usage</td>
+				    <td><span id="piMem">-- / --</span></td>
+				    <td class="text-end"><div class="status-bubble" id="memBubble"><span>--</span></div></td>
+				  </tr>
+				  <tr>
+					<td class="text-start">SD Space Used</td>
+					<td colspan="2"><span id="piDisk">-- / --</span></td>
+				  </tr>
+				  <tr>
+					<td class="text-start">CPU Temp</td>
+					<td colspan="2"><span id="piTemp">--°C</span></td>
+				  </tr>
+				</tbody>
+			  </table>
+			</div>
+		  </div>
+		</div>
+
+  <script>
+    function getFormattedDate() {
+      const now = new Date();
+      return `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')}`;
+    }
+    document.getElementById('logFilename').placeholder = `${getFormattedDate()}.csv`;
+
+    let isLogging = false;
+
+    document.getElementById('startLogging').addEventListener('click', () => {
+      let filename = document.getElementById('logFilename').value.trim();
+      if (!filename.toLowerCase().endsWith('.csv')) {
+        filename += '.csv';
+        document.getElementById('logFilename').value = filename;
+      }
+      isLogging = true;
+      document.querySelector('#startLogging i').className = 'bi bi-record-fill text-danger';
+      console.log('Logging started:', filename);
+    });
+
+    document.getElementById('stopLogging').addEventListener('click', () => {
+      isLogging = false;
+      document.querySelector('#startLogging i').className = 'bi bi-play-fill';
+      console.log('Logging stopped');
+    });
+
+    function updateBubble(bubbleId, percent) {
+      const bubble = document.getElementById(bubbleId);
+      bubble.innerHTML = `<span>${Math.round(percent)}</span>`;
+      const angle = percent * 3.6;
+      bubble.style.setProperty('--angle', `${angle}deg`);
+      bubble.style.background = `conic-gradient(red ${angle}deg, #444 ${angle}deg)`;
+    }
+	
+	fetchSystemStats = () => {
+	  fetch('/cgi-bin/system_stats.py')
+		.then(res => res.json())
+		.then(data => {
+		  const memText = `${(data.mem_used).toFixed(1)} / ${(data.mem_total).toFixed(1)} MB`;
+		  const diskText = `${(data.disk_used / 1024 / 1024 / 1024).toFixed(2)} / ${(data.disk_total / 1024 / 1024 / 1024).toFixed(2)} GB`;
+
+		  document.getElementById('piCpu').innerText = `${data.cpu.toFixed(2)}%`;
+		  document.getElementById('piMem').innerText = memText;
+		  document.getElementById('piDisk').innerText = diskText;
+		  document.getElementById('piTemp').innerText = (data.temp ?? '--') + '°C';
+
+		  updateBubble('cpuBubble', data.cpu);
+		  updateBubble('memBubble', data.mem);
+		})
+		.catch(err => {
+		  document.getElementById('piCpu').innerText = '--';
+		  document.getElementById('piMem').innerText = '--';
+		  document.getElementById('piDisk').innerText = '--';
+		  document.getElementById('piTemp').innerText = '--';
+		  document.getElementById('cpuBubble').innerText = '--';
+		  document.getElementById('memBubble').innerText = '--';
+		});
+    }
+	
+	setInterval(fetchSystemStats, 5000);
+    fetchSystemStats()
+
+    const sensors = [
+      { name: 'Chamber', color: '#6c757d' },
+      { name: 'Probe 1', color: '#dc3545' },
+      { name: 'Probe 2', color: '#ffc107' },
+      { name: 'Probe 3', color: '#198754' },
+      { name: 'Probe 4', color: '#0d6efd' },
+      { name: 'Ambient Temp', color: '#0dcaf0' },
+      { name: 'Humidity', color: '#8b5cf6' }
+    ];
+
+    const chartCtx = document.getElementById('tempChart').getContext('2d');
+    const chartData = {
+      labels: [],
+      datasets: sensors.map(sensor => ({
+        label: sensor.name,
+        data: [],
+        borderColor: sensor.color,
+        backgroundColor: sensor.color,
+        tension: 0,
+        pointRadius: 0,
+        yAxisID: sensor.name === 'Humidity' ? 'y1' : 'y',
+      }))
+    };
+
+    const tempChart = new Chart(chartCtx, {
+      type: 'line',
+      data: chartData,
+      options: {
+        responsive: true,
+		maintainAspectRatio: false,
+        animation: false,
+        plugins: { 
+			legend: { display: false },
+			tooltip: { enabled: true }
+			},
+        scales: {
+          x: {
+            type: 'linear',
+            ticks: {
+              color: '#ccc',
+              callback: (val) => {
+                const s = Math.floor(val);
+                const h = Math.floor(s / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const sec = s % 60;
+                if (h) return `${h}h ${m}m`;
+                if (m) return `${m}m ${sec}s`;
+                return `${sec}s`;
+              }
+            },
+			grid: { drawOnChartArea: true, color: '#333' },
+            title: { display: true, text: 'Time', color: '#ccc' },
+            min: 0
+          },
+          y: {
+            ticks: { 
+				color: '#ccc', 
+				callback: function(value) {
+					return value.toFixed(0);
+				},
+				stepSize: 10
+			},
+			grid: { drawOnChartArea: true, color: '#333' },
+            title: { display: true, text: 'Temperature (°F)', color: '#ccc' },
+            beginAtZero: false
+          },
+          y1: {
+            position: 'right',
+            ticks: { color: '#ccc' },
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: 'Humidity (%)', color: '#ccc' }
+          }
+        }
+      }
+    });
+
+    const tbody = document.getElementById('tempTableBody');
+    sensors.forEach((sensor, i) => {
+      const row = document.createElement('tr');
+      row.id = `row${i}`;
+      row.innerHTML = `
+        <td class="text-start"><i class="bi ${sensor.name === 'Humidity' ? 'bi-droplet-half' : sensor.name === 'Ambient Temp' ? 'bi-thermometer-sun' : 'bi-thermometer-half'}" style="color:${sensor.color}"></i> ${sensor.name}</td>
+        <td class="text-start" id="status${i}">--</td>
+        <td class="text-end" id="current${i}">---</td>
+        <td>${sensor.name === 'Humidity' || sensor.name === 'Ambient Temp' ? '' : `<input type="number" class="form-control form-control-sm target-input text-center" id="target${i}" value="200">`}</td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    let time = 0;
+    setInterval(() => {
+      chartData.labels.push(time);
+      sensors.forEach((sensor, i) => {
+        let val;
+        if (sensor.name === 'Humidity') val = Math.floor(Math.random() * 30 + 40);
+        else if (sensor.name === 'Ambient Temp') val = Math.floor(Math.random() * 10 + 65);
+        else val = Math.random() < 0.1 ? 0 : Math.floor(Math.random() * 100 + 120);
+
+        chartData.datasets[i].data.push({ x: time, y: val });
+
+        const statusEl = document.getElementById(`status${i}`);
+        const currentEl = document.getElementById(`current${i}`);
+        const targetInput = document.getElementById(`target${i}`);
+        const row = document.getElementById(`row${i}`);
+
+        if (currentEl && statusEl) {
+          currentEl.innerText = `${val}${sensor.name === 'Humidity' ? '%' : '°F'}`;
+          if (val === 0 && sensor.name.startsWith('Probe')) {
+            statusEl.innerText = 'Disconnected';
+            row.classList.add('disconnected');
+          } else {
+            row.classList.remove('disconnected');
+            if (sensor.name === 'Chamber') {
+              statusEl.innerText = `${Math.floor(val / 2)}%`;
+            } else if (targetInput) {
+              const target = parseInt(targetInput.value);
+              statusEl.innerText = val >= target ? 'Complete' : 'Cooking';
+            } else {
+              statusEl.innerText = '';
+            }
+          }
+        }
+      });
+
+      tempChart.options.scales.x.max = time;
+      tempChart.options.scales.x.min = Math.max(0, time - 600);
+      tempChart.update();
+	  tempChart.resize();
+      time += 2;
+    }, 2000);
+  </script>
+</body>
+</html>
