@@ -1,8 +1,13 @@
 from flask import Flask, render_template, request, send_from_directory, jsonify
 from flask_socketio import SocketIO, emit
-import os
 import datetime
 import csv
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+BACKEND_PORT = int(os.getenv("BACKEND_PORT", 5000))
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -88,4 +93,4 @@ def get_status():
     return jsonify({'active_log_file': active_log_file})
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=BACKEND_PORT)

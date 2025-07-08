@@ -2,10 +2,15 @@ import time
 import serial
 import requests
 import json
+from dotenv import load_dotenv
 import os
 
-SERIAL_PORT = '/dev/ttyACM0'
-BAUD_RATE = 115200
+load_dotenv()
+
+SERIAL_PORT = os.getenv("SERIAL_PORT", "/dev/ttyACM0")
+BAUD_RATE = os.getenv("BAUD_RATE", 115200)
+BACKEND_HOST = int(os.getenv("BACKEND_HOST", 127.0.0.1))
+BACKEND_PORT = int(os.getenv("BACKEND_PORT", 5000))
 
 # Retry loop for serial connection
 while True:
@@ -29,7 +34,7 @@ while True:
             try:
                 data = json.loads(line)
                 print("Sending:", data)
-                requests.post('http://127.0.0.1:5000/log-entry', json=data)
+                requests.post(f'http://{BACKEND_HOST}:{BACKEND_PORT}/log-entry', json=data)
             except json.JSONDecodeError as e:
                 print("Invalid JSON received, skipping line.")
             except Exception as e:

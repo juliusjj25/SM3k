@@ -1,9 +1,13 @@
 import serial
 import time
 import sys
+from dotenv import load_dotenv
+import os
 
-SERIAL_PORT = '/dev/ttyUSB0'
-BAUD_RATE = 115200
+load_dotenv()
+
+SERIAL_PORT = os.getenv("SERIAL_PORT", "/dev/ttyACM0")
+BAUD_RATE = os.getenv("BAUD_RATE", 115200)
 
 def log_serial(filename):
     try:
