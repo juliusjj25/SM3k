@@ -17,6 +17,7 @@ fi
 # Set correct permissions
 chown -R juliusjj25:juliusjj25 "$PROJECT_DIR"
 chmod -R u+rwX,g+rX,o-rwx "$PROJECT_DIR"
+chmod +x "$BACKEND_DIR/start.sh"
 
 # Set up the virtual environment if not already
 if [ ! -d "$VENV_DIR" ]; then
@@ -79,7 +80,7 @@ cp "$PROJECT_DIR/backend/.env" "$BACKEND_DIR/.env"
 # Fix permissions again to be sure
 chown -R juliusjj25:juliusjj25 "$PROJECT_DIR"
 chmod -R u+rwX,g+rX,o-rwx "$PROJECT_DIR"
-chmod +x "$BACKEND_DIR/start.sh"
+
 
 # Done
 echo "Deployment complete. Check with: journalctl -u smoker-backend.service -f"
