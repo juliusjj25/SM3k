@@ -6,9 +6,14 @@ BACKEND_DIR="$PROJECT_DIR/backend"
 VENV_DIR="$BACKEND_DIR/venv"
 
 # Clone the repo if it doesn't exist
-if [ ! -d "$PROJECT_DIR" ]; then
+if [ ! -d "$PROJECT_DIR/.git" ]; then
     git clone git@github.com:juliusjj25/SM3k.git "$PROJECT_DIR"
+else
+    cd "$PROJECT_DIR"
+    git remote set-url origin git@github.com:juliusjj25/SM3k.git
+    git pull
 fi
+
 
 # Set correct permissions
 chown -R juliusjj25:juliusjj25 "$PROJECT_DIR"
