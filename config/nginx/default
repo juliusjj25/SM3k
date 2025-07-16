@@ -1,4 +1,4 @@
-# Default HTTP redirect to HTTPS
+# HTTP to HTTPS Redirect (default server)
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -7,7 +7,7 @@ server {
     return 301 https://$host$request_uri;
 }
 
-# Redirect for your domain (also HTTP to HTTPS)
+# Redirect for your domain (no need for another default)
 server {
     listen 80;
     listen [::]:80;
@@ -43,11 +43,12 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
+    # CGI handler
     location /cgi-bin/ {
-    gzip off;
-    root /home/juliusjj25/SM3k;
-    fastcgi_pass unix:/var/run/fcgiwrap.socket;
-    include fastcgi_params;
-    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        gzip off;
+        root /home/juliusjj25/SM3k;
+        fastcgi_pass unix:/var/run/fcgiwrap.socket;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
 }
