@@ -14,7 +14,6 @@ else
     git pull
 fi
 
-
 # Set correct permissions
 chown -R juliusjj25:juliusjj25 "$PROJECT_DIR"
 chmod -R u+rwX,g+rX,o-rwx "$PROJECT_DIR"
@@ -49,6 +48,17 @@ sudo cp "$PROJECT_DIR/config/nginx/default" /etc/nginx/sites-available/sm3k
 sudo ln -sf /etc/nginx/sites-available/sm3k /etc/nginx/sites-enabled/sm3k
 sudo chmod 644 /etc/nginx/sites-available/sm3k
 sudo systemctl restart nginx
+
+# Install fcgiwrap if not installed
+if ! dpkg -l | grep -q fcgiwrap; then
+    echo "Installing fcgiwrap..."
+    sudo apt update
+    sudo apt install -y fcgiwrap
+fi
+
+# Enable and start fcgiwrap service
+sudo systemctl enable fcgiwrap
+sudo systemctl restart fcgiwrap
 
 # Copy DuckDNS script and set executable
 sudo cp "$PROJECT_DIR/config/duckdns/duck.sh" /usr/local/bin/duck.sh
