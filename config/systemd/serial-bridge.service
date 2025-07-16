@@ -6,9 +6,9 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=juliusjj25
-WorkingDirectory=/home/juliusjj25/SM3K/backend/services
-ExecStart=/home/juliusjj25/SM3K/backend/services/start-serial.sh
-Environment="PATH=/home/juliusjj25/SM3K/backend/venv/bin"
+WorkingDirectory=/home/juliusjj25/SM3k/backend/services
+ExecStart=/home/juliusjj25/SM3k/backend/services/start-serial.sh
+Environment="PATH=/home/juliusjj25/SM3k/backend/venv/bin"
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal
