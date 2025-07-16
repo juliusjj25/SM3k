@@ -52,6 +52,12 @@ sudo chmod +x /usr/local/bin/duck.sh
 # Add cron job for DuckDNS if not already
 (crontab -l 2>/dev/null | grep -q 'duck.sh') || (crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/duck.sh >/dev/null 2>&1") | crontab -
 
+# Install CGI Scripts
+sudo mkdir -p /usr/lib/cgi-bin
+sudo cp -f "$PROJECT_DIR/cgi-bin/"*.py /usr/lib/cgi-bin/
+sudo chown root:root /usr/lib/cgi-bin/*.py
+sudo chmod 755 /usr/lib/cgi-bin/*.py
+
 # Copy .env file to backend directory
 cp "$PROJECT_DIR/backend/.env" "$BACKEND_DIR/.env"
 

@@ -28,7 +28,7 @@ server {
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     # Serve frontend files
-    root /home/juliusjj25/smoker-backend/templates;
+    root /home/juliusjj25/SM3k/backend/templates;
     index index.html;
 
     # Proxy to Flask app
@@ -41,5 +41,13 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /cgi-bin/ {
+    gzip off;
+    root /home/juliusjj25/SM3k;
+    fastcgi_pass unix:/var/run/fcgiwrap.socket;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     }
 }
