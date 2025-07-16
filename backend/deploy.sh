@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Define variables
-PROJECT_DIR="/home/juliusjj25/SM3K"
+PROJECT_DIR="/home/juliusjj25/SM3k"
 BACKEND_DIR="$PROJECT_DIR/backend"
 VENV_DIR="$BACKEND_DIR/venv"
 
 # Clone the repo if it doesn't exist
 if [ ! -d "$PROJECT_DIR" ]; then
-    git clone https://github.com/juliusjj25/SM3K.git "$PROJECT_DIR"
+    git clone git@github.com:juliusjj25/SM3k.git "$PROJECT_DIR"
 fi
 
 # Set correct permissions
