@@ -106,19 +106,24 @@ def get_cpu_temp():
 
 @app.route('/system-stats')
 def system_stats():
+    cpu = psutil.cpu_percent(interval=0.5)
+    mem = psutil.virtual_memory()
+    disk = shutil.disk_usage("/")
+    temp = get_cpu_temp()
+
+    return {
+        'cpu': cpu,
+        'mem': mem.percent,
+        'mem_used': mem.used / (1024 * 1024),
+        'mem_total': mem.total / (1024 * 1024),
+        'disk_used': disk.used,
+        'disk_total': disk.total,
+        'temp': temp
+    }
+
+def get_cpu_temp():
     try:
-        mem = psutil.virtual_memory()
-        disk = shutil.disk_usage("/")
-        data = {
-            "cpu": psutil.cpu_percent(interval=0.5),
-            "mem": mem.percent,
-            "mem_used": mem.used / (1024 * 1024),
-            "mem_total": mem.total / (1024 * 1024),
-            "disk": disk.percent,
-            "disk_used": disk.used,
-            "disk_total": disk.total,
-            "temp": get_cpu_temp()
-        }
-        return jsonify(data)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            return round(int(f.read()) / 1000, 1)
+    except:
+        return None
