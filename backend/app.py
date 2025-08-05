@@ -4,6 +4,8 @@ import datetime
 import csv
 from dotenv import load_dotenv
 import os
+import psutil
+import shutil
 
 load_dotenv()
 
@@ -94,3 +96,30 @@ def get_status():
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=BACKEND_PORT)
+
+def get_cpu_temp():
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            return round(int(f.read()) / 1000.0, 1)
+    except:
+        return None
+
+@app.route('/system-stats')
+def system_stats():
+    try:
+        mem = psutil.virtual_memory()
+        disk = shutil.disk_usage("/")
+
+        data = {
+            "cpu": psutil.cpu_percent(interval=0.5),
+            "mem": mem.percent,
+            "mem_used": mem.used / (1024 * 1024),
+            "mem_total": mem.total / (1024 * 1024),
+            "disk": disk.percent,
+            "disk_used": disk.used,
+            "disk_total": disk.total,
+            "temp": get_cpu_temp()
+        }
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
