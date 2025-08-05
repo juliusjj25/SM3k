@@ -221,7 +221,7 @@
     }
 	
 	fetchSystemStats = () => {
-	  fetch('/system_stats')
+	  fetch('/system-stats')
 		.then(res => res.json())
 		.then(data => {
 		  const memText = `${(data.mem_used).toFixed(1)} / ${(data.mem_total).toFixed(1)} MB`;

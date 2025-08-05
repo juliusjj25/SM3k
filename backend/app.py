@@ -105,7 +105,6 @@ def get_cpu_temp():
         return None
 
 @app.route('/system-stats')
-@app.route('/system_stats')  # allow underscore for legacy calls
 def system_stats():
     try:
         mem = psutil.virtual_memory()
