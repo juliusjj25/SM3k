@@ -25,11 +25,20 @@ fi
 source "$BACKEND_DIR/venv/bin/activate"
 pip install --upgrade pip
 pip install -r "$BACKEND_DIR/requirements.txt"
+
+# Ensure python-dotenv is installed
+if ! pip show python-dotenv > /dev/null 2>&1; then
+  pip install python-dotenv
+fi
 deactivate
 
-# Copy environment file if missing
-if [ ! -f "$BACKEND_DIR/.env" ] && [ -f "$BACKEND_DIR/.env.example" ]; then
-  cp "$BACKEND_DIR/.env.example" "$BACKEND_DIR/.env"
+# Fix .env format if needed (prepend export if missing)
+ENV_FILE="$BACKEND_DIR/.env"
+if [ -f "$ENV_FILE" ]; then
+  grep -q '^export ' "$ENV_FILE" || sed -i 's/^/export /' "$ENV_FILE"
+elif [ -f "$BACKEND_DIR/.env.example" ]; then
+  cp "$BACKEND_DIR/.env.example" "$ENV_FILE"
+  sed -i 's/^/export /' "$ENV_FILE"
 fi
 
 # Install systemd services
@@ -53,5 +62,11 @@ if [ -f "$HOOKS_SRC" ]; then
   cp "$HOOKS_SRC" "$PROJECT_DIR/.git/hooks/post-merge"
   chmod +x "$PROJECT_DIR/.git/hooks/post-merge"
 fi
+
+# Reload systemd and restart services
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl restart smoker-backend.service
+sudo systemctl restart serial-bridge.service
 
 echo "Deploy script complete."
