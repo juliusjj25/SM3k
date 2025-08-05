@@ -1,7 +1,14 @@
 #!/bin/bash
 
-# Activate virtual environment
-source "$VENV_PATH/bin/activate"
+# Load environment variables
+set -a
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+if [ -f "$PROJECT_DIR/backend/.env" ]; then
+  source "$PROJECT_DIR/backend/.env"
+fi
+set +a
 
-# Run the serial bridge
-exec python3 serial_bridge.py
+cd "$PROJECT_DIR/backend/services"
+source "$PROJECT_DIR/backend/venv/bin/activate"
+python3 serial_bridge.py

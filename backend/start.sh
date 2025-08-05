@@ -2,9 +2,13 @@
 
 # Load environment variables
 set -a
-source /home/juliusjj25/SM3K/backend/.env
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+if [ -f "$PROJECT_DIR/backend/.env" ]; then
+  source "$PROJECT_DIR/backend/.env"
+fi
 set +a
 
-cd "$PROJECT_ROOT/backend"
-source "$VENV_PATH/bin/activate"
-exec gunicorn --worker-class eventlet -w 1 app:app --bind 0.0.0.0:$BACKEND_PORT
+cd "$PROJECT_DIR/backend"
+source venv/bin/activate
+python3 app.py --port "${BACKEND_PORT:-8080}"

@@ -1,86 +1,57 @@
 #!/bin/bash
 
-# Define variables
-PROJECT_DIR="/home/juliusjj25/SM3k"
+# Define project paths dynamically
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 BACKEND_DIR="$PROJECT_DIR/backend"
-VENV_DIR="$BACKEND_DIR/venv"
+SERVICE_DIR="$PROJECT_DIR/config/systemd"
+NGINX_DIR="$PROJECT_DIR/config/nginx"
+DUCKDNS_DIR="$PROJECT_DIR/config/duckdns"
+CGI_DIR="$PROJECT_DIR/cgi-bin"
 
-# Clone the repo if it doesn't exist
+# Clone the repo if needed
 if [ ! -d "$PROJECT_DIR/.git" ]; then
-    git clone git@github.com:juliusjj25/SM3k.git "$PROJECT_DIR"
+  git clone --depth 1 https://github.com/juliusjj25/SM3k.git "$PROJECT_DIR"
 else
-    cd "$PROJECT_DIR"
-    git remote set-url origin git@github.com:juliusjj25/SM3k.git
-    git pull
+  git -C "$PROJECT_DIR" pull --ff-only
 fi
 
-# Set correct permissions
-chown -R juliusjj25:juliusjj25 "$PROJECT_DIR"
-chmod -R u+rwX,g+rX,o-rwx "$PROJECT_DIR"
-chmod +x "$BACKEND_DIR/start.sh"
-
-# Set up the virtual environment if not already
-if [ ! -d "$VENV_DIR" ]; then
-    python3 -m venv "$VENV_DIR"
+# Ensure virtual environment exists
+if [ ! -d "$BACKEND_DIR/venv" ]; then
+  python3 -m venv "$BACKEND_DIR/venv"
 fi
 
-# Activate venv and install requirements
-source "$VENV_DIR/bin/activate"
+# Install Python dependencies
+source "$BACKEND_DIR/venv/bin/activate"
 pip install --upgrade pip
 pip install -r "$BACKEND_DIR/requirements.txt"
+deactivate
 
-# Copy systemd service files
-sudo cp "$PROJECT_DIR/config/systemd/smoker-backend.service" /etc/systemd/system/
-sudo cp "$PROJECT_DIR/config/systemd/serial-bridge.service" /etc/systemd/system/
-sudo chmod 644 /etc/systemd/system/smoker-backend.service
-sudo chmod 644 /etc/systemd/system/serial-bridge.service
-
-# Reload systemd and enable services
-sudo systemctl daemon-reexec
-sudo systemctl enable smoker-backend.service
-sudo systemctl enable serial-bridge.service
-
-# Restart services
-sudo systemctl restart smoker-backend.service
-sudo systemctl restart serial-bridge.service
-
-# Copy nginx config and set permissions
-sudo cp "$PROJECT_DIR/config/nginx/default" /etc/nginx/sites-available/sm3k
-sudo ln -sf /etc/nginx/sites-available/sm3k /etc/nginx/sites-enabled/sm3k
-sudo chmod 644 /etc/nginx/sites-available/sm3k
-sudo systemctl restart nginx
-
-# Install fcgiwrap if not installed
-if ! dpkg -l | grep -q fcgiwrap; then
-    echo "Installing fcgiwrap..."
-    sudo apt update
-    sudo apt install -y fcgiwrap
+# Copy environment file if missing
+if [ ! -f "$BACKEND_DIR/.env" ] && [ -f "$BACKEND_DIR/.env.example" ]; then
+  cp "$BACKEND_DIR/.env.example" "$BACKEND_DIR/.env"
 fi
 
-# Enable and start fcgiwrap service
-sudo systemctl enable fcgiwrap
-sudo systemctl restart fcgiwrap
+# Install systemd services
+sudo install -m 644 "$SERVICE_DIR"/smoker-backend.service /etc/systemd/system/
+sudo install -m 644 "$SERVICE_DIR"/serial-bridge.service /etc/systemd/system/
 
-# Copy DuckDNS script and set executable
-sudo cp "$PROJECT_DIR/config/duckdns/duck.sh" /usr/local/bin/duck.sh
-sudo chmod +x /usr/local/bin/duck.sh
+# Install nginx config
+sudo install -m 644 "$NGINX_DIR"/default /etc/nginx/sites-available/sm3k.conf
+sudo ln -sf /etc/nginx/sites-available/sm3k.conf /etc/nginx/sites-enabled/sm3k.conf
 
-# Add cron job for DuckDNS if not already
-(crontab -l 2>/dev/null | grep -q 'duck.sh') || (crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/duck.sh >/dev/null 2>&1") | crontab -
+# Install duck.sh
+sudo install -m 755 "$DUCKDNS_DIR/duck.sh" /usr/local/bin/duck.sh
 
-# Install CGI Scripts
+# Install CGI scripts
 sudo mkdir -p /usr/lib/cgi-bin
-sudo cp -f "$PROJECT_DIR/cgi-bin/"*.py /usr/lib/cgi-bin/
-sudo chown root:root /usr/lib/cgi-bin/*.py
-sudo chmod 755 /usr/lib/cgi-bin/*.py
+sudo install -m 755 "$CGI_DIR"/* /usr/lib/cgi-bin/
 
-# Copy .env file to backend directory
-cp "$PROJECT_DIR/backend/.env" "$BACKEND_DIR/.env"
+# Install post-merge git hook
+HOOKS_SRC="$PROJECT_DIR/scripts/git-hooks/post-merge"
+if [ -f "$HOOKS_SRC" ]; then
+  cp "$HOOKS_SRC" "$PROJECT_DIR/.git/hooks/post-merge"
+  chmod +x "$PROJECT_DIR/.git/hooks/post-merge"
+fi
 
-# Fix permissions again to be sure
-chown -R juliusjj25:juliusjj25 "$PROJECT_DIR"
-chmod -R u+rwX,g+rX,o-rwx "$PROJECT_DIR"
-
-
-# Done
-echo "Deployment complete. Check with: journalctl -u smoker-backend.service -f"
+echo "Deploy script complete."
