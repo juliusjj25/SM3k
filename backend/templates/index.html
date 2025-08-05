@@ -8,8 +8,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Head tag -->
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}" sizes="64x64">
-  <!-- Top left logo -->
-  <img src="{{ url_for('static', filename='favicon.png') }}" alt="SM3k Logo" style="height: 1.5em; vertical-align: middle; margin-right: 0.5em;">
 
   <style>
     body { padding: 2rem; background-color: #121212; color: #fff; }
@@ -112,7 +110,7 @@
 <body>
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">
-      <img src="/favicon.png" alt="SM3k Logo" style="height: 1.5em; vertical-align: middle; margin-right: 0.5em;">
+      <img src="{{ url_for('static', filename='favicon.png') }}" alt="SM3k Logo" style="height: 5em; vertical-align: middle; margin-right: 0.5em;">
     </h1>
     <form class="row g-2 align-items-center" onsubmit="return false;">
       <div class="col-auto">
