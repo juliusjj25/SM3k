@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=simple
 User=juliusjj25
 WorkingDirectory=/home/juliusjj25/SM3k/backend
-ExecStart=/home/juliusjj25/SM3k/backend/start.sh
+ExecStart=/bin/bash /home/juliusjj25/SM3k/backend/start.sh
 Environment="PATH=/home/juliusjj25/SM3k/backend/venv/bin"
 Restart=on-failure
 RestartSec=5
