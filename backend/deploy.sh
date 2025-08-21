@@ -46,8 +46,8 @@ sudo install -m 644 "$SERVICE_DIR"/smoker-backend.service /etc/systemd/system/
 sudo install -m 644 "$SERVICE_DIR"/serial-bridge.service /etc/systemd/system/
 
 # Install nginx config
-sudo install -m 644 "$NGINX_DIR"/default /etc/nginx/sites-available/sm3k.conf
-sudo ln -sf /etc/nginx/sites-available/sm3k.conf /etc/nginx/sites-enabled/sm3k.conf
+sudo install -m 644 "$NGINX_DIR"/default /etc/nginx/sites-available/sm3k
+sudo ln -sf /etc/nginx/sites-available/sm3k.conf /etc/nginx/sites-enabled/sm3k
 
 # Install duck.sh
 sudo install -m 755 "$DUCKDNS_DIR/duck.sh" /usr/local/bin/duck.sh
