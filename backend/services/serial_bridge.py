@@ -9,8 +9,13 @@ load_dotenv()
 
 SERIAL_PORT = os.getenv("SERIAL_PORT", "/dev/ttyACM0")
 <<<<<<< HEAD
+<<<<<<< HEAD
 BAUD_RATE = int(os.getenv("BAUD_RATE", 115200))
 BACKEND_HOST = os.getenv("BACKEND_HOST", "127.0.0.1")  # keep as string
+=======
+BAUD_RATE = os.getenv("BAUD_RATE", 115200)
+BACKEND_HOST = int(os.getenv("BACKEND_HOST", 127.0.0.1))
+>>>>>>> parent of 82097ca (Update to persistent data)
 =======
 BAUD_RATE = os.getenv("BAUD_RATE", 115200)
 BACKEND_HOST = int(os.getenv("BACKEND_HOST", 127.0.0.1))
@@ -39,9 +44,15 @@ while True:
             try:
                 data = json.loads(line)
 <<<<<<< HEAD
+<<<<<<< HEAD
                 url = f'http://{BACKEND_HOST}:{BACKEND_PORT}/log-entry'
                 requests.post(url, json=data)
             except json.JSONDecodeError:
+=======
+                print("Sending:", data)
+                requests.post(f'http://{BACKEND_HOST}:{BACKEND_PORT}/log-entry', json=data)
+            except json.JSONDecodeError as e:
+>>>>>>> parent of 82097ca (Update to persistent data)
 =======
                 print("Sending:", data)
                 requests.post(f'http://{BACKEND_HOST}:{BACKEND_PORT}/log-entry', json=data)

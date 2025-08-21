@@ -18,6 +18,10 @@ os.makedirs(LOG_DIR, exist_ok=True)
 active_log_file = None
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+# Web page
+>>>>>>> parent of 82097ca (Update to persistent data)
 =======
 # Web page
 >>>>>>> parent of 82097ca (Update to persistent data)
@@ -25,6 +29,7 @@ active_log_file = None
 def index():
     return render_template('index.html')
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 # ---------- Logs ----------
 @app.route('/logs', methods=['GET'])
@@ -35,6 +40,8 @@ def list_logs():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 =======
+=======
+>>>>>>> parent of 82097ca (Update to persistent data)
 # List available logs
 @app.route('/logs', methods=['GET'])
 def list_logs():
@@ -45,7 +52,11 @@ def list_logs():
 # Download a log
 @app.route('/logs/<filename>', methods=['GET'])
 <<<<<<< HEAD
+<<<<<<< HEAD
 def download_log(filename: str):
+=======
+def download_log(filename):
+>>>>>>> parent of 82097ca (Update to persistent data)
 =======
 def download_log(filename):
 >>>>>>> parent of 82097ca (Update to persistent data)
@@ -54,7 +65,11 @@ def download_log(filename):
 # Delete a log
 @app.route('/logs/<filename>', methods=['DELETE'])
 <<<<<<< HEAD
+<<<<<<< HEAD
 def delete_log(filename: str):
+=======
+def delete_log(filename):
+>>>>>>> parent of 82097ca (Update to persistent data)
 =======
 def delete_log(filename):
 >>>>>>> parent of 82097ca (Update to persistent data)
@@ -87,7 +102,11 @@ def log_entry():
         return jsonify({'error': 'No active log file'}), 400
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     data = request.get_json() or {}
+=======
+    data = request.get_json()
+>>>>>>> parent of 82097ca (Update to persistent data)
 =======
     data = request.get_json()
 >>>>>>> parent of 82097ca (Update to persistent data)
@@ -105,6 +124,9 @@ def log_entry():
 =======
         writer = csv.writer(f)
         writer.writerow(row)
+<<<<<<< HEAD
+>>>>>>> parent of 82097ca (Update to persistent data)
+=======
 >>>>>>> parent of 82097ca (Update to persistent data)
 
     socketio.emit('new-entry', row)
@@ -125,6 +147,7 @@ def handle_connect():
     
 @app.route('/status', methods=['GET'])
 def get_status():
+<<<<<<< HEAD
 <<<<<<< HEAD
     return jsonify({'active_log_file': active_log_file, 'log_dir': LOG_DIR})
 
@@ -159,6 +182,10 @@ def get_active_log_json():
     return jsonify({'active_log_file': active_log_file})
 
 >>>>>>> parent of 82097ca (Update to persistent data)
+=======
+    return jsonify({'active_log_file': active_log_file})
+
+>>>>>>> parent of 82097ca (Update to persistent data)
 def get_cpu_temp():
     try:
         with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
@@ -188,5 +215,9 @@ def system_stats():
 
 if __name__ == '__main__':
     print("Starting Flask app...")
+<<<<<<< HEAD
+    socketio.run(app, host='0.0.0.0', port=BACKEND_PORT)
+>>>>>>> parent of 82097ca (Update to persistent data)
+=======
     socketio.run(app, host='0.0.0.0', port=BACKEND_PORT)
 >>>>>>> parent of 82097ca (Update to persistent data)

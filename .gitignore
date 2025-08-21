@@ -5,3 +5,7 @@ __pycache__/
 .vscode/
 .pio/
 .venv/
+backend/app.py
+backend/app.py
+backend/services/serial_bridge.py
+backend/templates/index.html
