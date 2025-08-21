@@ -1,4 +1,6 @@
-# HTTP to HTTPS Redirect (default server)
+# /etc/nginx/sites-available/sm3k.conf
+
+# 1) SINGLE default HTTP -> HTTPS redirect
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -7,31 +9,29 @@ server {
     return 301 https://$host$request_uri;
 }
 
-# Redirect for your domain (no need for another default)
-server {
-    listen 80;
-    listen [::]:80;
-    server_name cherrysmoked.duckdns.org;
-
-    return 301 https://$host$request_uri;
-}
-
-# HTTPS server for your Flask app
+# 2) HTTPS app server
 server {
     listen 443 ssl;
-    listen [::]:443 ssl ipv6only=on;
+    listen [::]:443 ssl;   # drop ipv6only=on (defaults are fine)
     server_name cherrysmoked.duckdns.org;
 
-    ssl_certificate /etc/letsencrypt/live/cherrysmoked.duckdns.org/fullchain.pem;
+    ssl_certificate     /etc/letsencrypt/live/cherrysmoked.duckdns.org/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/cherrysmoked.duckdns.org/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+    include             /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam         /etc/letsencrypt/ssl-dhparams.pem;
 
-    # Serve frontend files
-    root /home/juliusjj25/SM3k/backend/templates;
-    index index.html;
+    # Serve static assets directly (faster than proxying)
+    location /static/ {
+        alias /home/juliusjj25/SM3k/backend/static/;
+        autoindex off;
+    }
 
-    # Proxy to Flask app
+    # If you want to serve the favicon directly:
+    location = /favicon.png {
+        alias /home/juliusjj25/SM3k/backend/static/favicon.png;
+    }
+
+    # Proxy everything else to Flask
     location / {
         proxy_pass http://127.0.0.1:5000;
         proxy_http_version 1.1;
@@ -41,14 +41,16 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
     }
 
-    # CGI handler
+    # (Optional) CGI via fcgiwrap; only keep if you actually use it
     location /cgi-bin/ {
         gzip off;
         root /home/juliusjj25/SM3k;
-        fastcgi_pass unix:/var/run/fcgiwrap.socket;
         include fastcgi_params;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/var/run/fcgiwrap.socket;
     }
 }
