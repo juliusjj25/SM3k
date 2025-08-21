@@ -5,11 +5,22 @@ import json
 from dotenv import load_dotenv
 import os
 
+"""
+serial_bridge.py
+-----------------
+Reads JSON lines from a serial port and forwards them to the SmokerMaster3000
+backend.  Environment variables control the serial port and baud rate as
+well as the backend host and port.  The previous version incorrectly cast
+BACKEND_HOST to an integer which prevented non‑numeric hostnames from being
+used.  This version treats BACKEND_HOST as a string and ensures BAUD_RATE
+is an integer.  Invalid JSON lines are silently skipped.
+"""
+
 load_dotenv()
 
 SERIAL_PORT = os.getenv("SERIAL_PORT", "/dev/ttyACM0")
-BAUD_RATE = os.getenv("BAUD_RATE", 115200)
-BACKEND_HOST = int(os.getenv("BACKEND_HOST", 127.0.0.1))
+BAUD_RATE = int(os.getenv("BAUD_RATE", 115200))
+BACKEND_HOST = os.getenv("BACKEND_HOST", "127.0.0.1")
 BACKEND_PORT = int(os.getenv("BACKEND_PORT", 5000))
 
 # Retry loop for serial connection
@@ -25,17 +36,17 @@ while True:
         print("Error opening serial port:", e)
     time.sleep(2)
 
-# Main loop
+# Main loop: read, parse JSON, forward to backend
 while True:
     try:
         line = ser.readline().decode('utf-8', errors='replace').strip()
         if line:
-            print(f"Raw line: {line}")  # Optional: comment out if too noisy
             try:
                 data = json.loads(line)
-                print("Sending:", data)
-                requests.post(f'http://{BACKEND_HOST}:{BACKEND_PORT}/log-entry', json=data)
-            except json.JSONDecodeError as e:
+                url = f'http://{BACKEND_HOST}:{BACKEND_PORT}/log-entry'
+                requests.post(url, json=data)
+            except json.JSONDecodeError:
+                # Skip invalid JSON lines
                 print("Invalid JSON received, skipping line.")
             except Exception as e:
                 print("Error sending data:", e)
