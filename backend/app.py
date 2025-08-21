@@ -94,6 +94,11 @@ def handle_connect():
 def get_status():
     return jsonify({'active_log_file': active_log_file})
 
+def get_cpu_temp():
+    try:
+        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
+            return round(int(f.read()) / 1000.0, 1)
+
 @app.route('/system-stats')
 def system_stats():
     cpu = psutil.cpu_percent(interval=0.5)
@@ -114,11 +119,6 @@ def system_stats():
 if __name__ == '__main__':
     print("Starting Flask app...")
     socketio.run(app, host='0.0.0.0', port=BACKEND_PORT)
-
-def get_cpu_temp():
-    try:
-        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
-            return round(int(f.read()) / 1000.0, 1)
 
     except:
         return None
