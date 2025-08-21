@@ -122,9 +122,5 @@ def get_cpu_temp():
     except:
         return None
 
-def get_cpu_temp():
-    try:
-        with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
-            return round(int(f.read()) / 1000, 1)
     except:
         return None
