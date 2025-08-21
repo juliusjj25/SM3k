@@ -99,7 +99,7 @@ def get_cpu_temp():
         with open("/sys/class/thermal/thermal_zone0/temp", "r") as f:
             return round(int(f.read()) / 1000.0, 1)
     except:
-    return None
+        return None
 
 @app.route('/system-stats')
 def system_stats():
