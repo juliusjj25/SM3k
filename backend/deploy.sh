@@ -45,10 +45,6 @@ fi
 sudo install -m 644 "$SERVICE_DIR"/smoker-backend.service /etc/systemd/system/
 sudo install -m 644 "$SERVICE_DIR"/serial-bridge.service /etc/systemd/system/
 
-# Ensure system packages are installed
-sudo apt update
-sudo apt install -y nginx fcgiwrap certbot python3-certbot-nginx
-
 # Install nginx config
 sudo install -m 644 "$NGINX_DIR"/default /etc/nginx/sites-available/sm3k
 sudo ln -sf /etc/nginx/sites-available/sm3k /etc/nginx/sites-enabled/sm3k
