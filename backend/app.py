@@ -112,6 +112,7 @@ def system_stats():
     }
 
 if __name__ == '__main__':
+    print("Starting Flask app...")
     socketio.run(app, host='0.0.0.0', port=BACKEND_PORT)
 
 def get_cpu_temp():
