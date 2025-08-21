@@ -6,27 +6,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/darkly/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<<<<<<< HEAD
-<<<<<<< HEAD
-  <!-- Use local socket.io client served by Flask-SocketIO so it works offline -->
-  <script src="/socket.io/socket.io.js"></script>
-=======
   <!-- Head tag -->
->>>>>>> parent of 82097ca (Update to persistent data)
-=======
-  <!-- Head tag -->
->>>>>>> parent of 82097ca (Update to persistent data)
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}" sizes="64x64">
 
   <style>
     body { padding: 2rem; background-color: #121212; color: #fff; }
     .card { margin-bottom: 1rem; background-color: #1f1f1f; border-color: #333; }
-<<<<<<< HEAD
-    .target-input { background-color: #2a2a2a; border: 1px solid #444; color: #fff; width: 80px; font-size: 0.9rem; padding: 2px 4px; }
-    .table td input { margin: auto; display: block; }
-    table, table th, table td { background-color: #1f1f1f !important; color: #ffffff !important; border-color: #333 !important; }
-    thead th { background-color: #1f1f1f !important; color: #cccccc !important; font-size: 1.5rem !important; }
-=======
     .target-input {
       background-color: #2a2a2a;
       border: 1px solid #444;
@@ -63,22 +48,10 @@
     input[type=number]:hover::-webkit-inner-spin-button {
       background-color: #3a3a3a;
     }
->>>>>>> parent of 82097ca (Update to persistent data)
     .disconnected { color: #888 !important; opacity: 0.6; }
-    .text-end { text-align: right; } .text-start { text-align: left; }
+    .text-end { text-align: right; }
+    .text-start { text-align: left; }
     td, th { white-space: nowrap; vertical-align: middle !important; height: 3.5rem; }
-<<<<<<< HEAD
-<<<<<<< HEAD
-    th:nth-child(1), td:nth-child(1) { width: 30%; text-align: left; }
-    th:nth-child(2), td:nth-child(2) { width: 25%; text-align: left; }
-    th:nth-child(3), td:nth-child(3) { width: 25%; text-align: right; }
-    th:nth-child(4), td:nth-child(4) { width: 20%; text-align: center; }
-    .status-bubble { position: relative; width: 32px; height: 32px; border-radius: 50%; background-color: #2a2a2a; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.6rem; margin-left: auto; }
-    .status-bubble::before { content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px; border-radius: 50%; background: conic-gradient(red 0%, #444 0%); z-index: 0; }
-    .status-bubble span { position: relative; z-index: 1; }
-=======
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
 	th:nth-child(1),
 	td:nth-child(1) {
 	  width: 30%;
@@ -132,7 +105,6 @@
       position: relative;
       z-index: 1;
     }
->>>>>>> parent of 82097ca (Update to persistent data)
   </style>
 </head>
 <body>
@@ -152,8 +124,6 @@
       </div>
     </form>
   </div>
-
-  <div class="alert alert-secondary py-2" id="banner" style="display:none;"></div>
 
   <div class="card">
     <div class="card-body">
@@ -178,35 +148,6 @@
   </div>
   
   <div class="row">
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Log Files</h5>
-          <div id="logTable">Loading logs...</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">System Status</h5>
-          <table class="table mb-0">
-            <tbody>
-              <tr><td class="text-start">CPU Usage</td><td><span id="piCpu">--%</span></td><td class="text-end"><div class="status-bubble" id="cpuBubble"><span>--</span></div></td></tr>
-              <tr><td class="text-start">Memory Usage</td><td><span id="piMem">-- / --</span></td><td class="text-end"><div class="status-bubble" id="memBubble"><span>--</span></div></td></tr>
-              <tr><td class="text-start">Disk Usage</td><td><span id="piDisk">-- / --</span></td><td class="text-end"></td></tr>
-              <tr><td class="text-start">Raspberry Pi Temp</td><td><span id="piTemp">--</span></td><td class="text-end"></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-=======
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
 	  <div class="col-md-6">
 		  <div class="card">
 			<div class="card-body">
@@ -244,10 +185,6 @@
 			</div>
 		  </div>
 		</div>
-<<<<<<< HEAD
->>>>>>> parent of 82097ca (Update to persistent data)
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
 
   <script>
     function getFormattedDate() {
@@ -256,205 +193,15 @@
     }
     document.getElementById('logFilename').placeholder = `${getFormattedDate()}.csv`;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    const sensors = [
-      { name: 'Chamber Temp', key: 'ChamberTemp', color: '#6c757d' },
-      { name: 'Meat 1', key: 'Meat1', color: '#dc3545' },
-      { name: 'Meat 2', key: 'Meat2', color: '#ffc107' },
-      { name: 'Meat 3', key: 'Meat3', color: '#198754' },
-      { name: 'Meat 4', key: 'Meat4', color: '#0d6efd' }
-    ];
-
-    let chartData = {
-      labels: [],
-      datasets: sensors.map(s => ({ label: s.name, data: [], borderColor: s.color, backgroundColor: s.color, tension: 0, pointRadius: 0 }))
-    };
-    let tempChart = null;
-    let globalStartTime = null;
-    let socket = null;
-
-    function showBanner(text) {
-      const b = document.getElementById('banner');
-      b.textContent = text;
-      b.style.display = text ? 'block' : 'none';
-    }
-
-    function setupTable() {
-      const tbody = document.getElementById('tempTableBody');
-      sensors.forEach((sensor, i) => {
-        const row = document.createElement('tr');
-        row.id = `row${i}`;
-        row.innerHTML = `
-          <td class="text-start"><i class="bi bi-thermometer-half" style="color:${sensor.color}"></i> ${sensor.name}</td>
-          <td class="text-start" id="status${i}">--</td>
-          <td class="text-end" id="current${i}">---</td>
-          <td><input type="number" class="form-control form-control-sm target-input text-center" id="target${i}" value="200"></td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function setupChart() {
-      const chartCtx = document.getElementById('tempChart').getContext('2d');
-      tempChart = new Chart(chartCtx, {
-        type: 'line',
-        data: chartData,
-        options: {
-          responsive: true, maintainAspectRatio: false, animation: false,
-          plugins: { legend: { display: false }, tooltip: { enabled: true } },
-          scales: {
-            x: {
-              type: 'linear',
-              ticks: {
-                color: '#ccc',
-                callback: (val) => {
-                  const s = Math.floor(val);
-                  const h = Math.floor(s / 3600);
-                  const m = Math.floor((s % 3600) / 60);
-                  const sec = s % 60;
-                  if (h) return `${h}h ${m}m`;
-                  if (m) return `${m}m ${sec}s`;
-                  return `${sec}s`;
-                }
-              },
-              grid: { drawOnChartArea: true, color: '#333' },
-              title: { display: true, text: 'Time', color: '#ccc' },
-              min: 0
-            },
-            y: {
-              ticks: { color: '#ccc', callback: (v) => v.toFixed(0), stepSize: 10 },
-              grid: { drawOnChartArea: true, color: '#333' },
-              title: { display: true, text: 'Temperature (°F)', color: '#ccc' },
-              beginAtZero: false
-            }
-          }
-        }
-      });
-    }
-
-    function updateTableRow(i, val) {
-      const statusEl = document.getElementById(`status${i}`);
-      const currentEl = document.getElementById(`current${i}`);
-      const targetInput = document.getElementById(`target${i}`);
-      const rowEl = document.getElementById(`row${i}`);
-      if (val === null || val === undefined || isNaN(val)) {
-        currentEl.innerText = '--';
-        statusEl.innerText = 'Disconnected';
-        rowEl.classList.add('disconnected');
-        return;
-      }
-      currentEl.innerText = `${val.toFixed(1)}°F`;
-      if (val === 0 && sensors[i].name.startsWith('Meat')) {
-        statusEl.innerText = 'Disconnected';
-        rowEl.classList.add('disconnected');
-      } else {
-        rowEl.classList.remove('disconnected');
-        if (i === 0) {
-          statusEl.innerText = `${Math.floor(val / 2)}%`;
-        } else if (targetInput) {
-          const target = parseFloat(targetInput.value);
-          statusEl.innerText = val >= target ? 'Complete' : 'Cooking';
-        } else {
-          statusEl.innerText = '';
-        }
-      }
-    }
-
-    function addEntry(entry) {
-      let timestamp; let values = {};
-      if (Array.isArray(entry)) {
-        [timestamp, values['ChamberTemp'], values['Meat1'], values['Meat2'], values['Meat3'], values['Meat4']] = entry;
-      } else {
-        timestamp = entry.Timestamp; values = entry;
-      }
-      const entryTime = new Date(timestamp).getTime();
-      if (globalStartTime === null) globalStartTime = entryTime;
-      const t = (entryTime - globalStartTime) / 1000;
-      chartData.labels.push(t);
-      sensors.forEach((sensor, i) => {
-        const raw = values[sensor.key];
-        const val = raw === null || raw === undefined || raw === '' ? null : parseFloat(raw);
-        chartData.datasets[i].data.push({ x: t, y: val });
-        updateTableRow(i, val);
-      });
-      tempChart.options.scales.x.max = t;
-      tempChart.options.scales.x.min = Math.max(0, t - 600);
-    }
-
-    async function fetchExistingData() {
-      try {
-        const statusRes = await fetch('/status');
-        const { active_log_file } = await statusRes.json();
-        if (active_log_file) {
-          const res = await fetch(`/logs/${active_log_file}/json`);
-          const entries = await res.json();
-          entries.forEach(e => addEntry(e));
-          tempChart.update();
-          showBanner('');
-        } else {
-          showBanner('No active log. Click Start to begin a new session or load a past log below.');
-        }
-      } catch (err) {
-        console.error('Error fetching existing data:', err);
-      }
-    }
-
-    function setupSocketIfAvailable() {
-      if (typeof io === 'undefined') {
-        console.warn('Socket.IO not available; running in fetch-only mode.');
-        return;
-      }
-      socket = io();
-      socket.on('init-log', (entries) => { entries.forEach(addEntry); tempChart.update(); });
-      socket.on('new-entry', (row) => { addEntry(row); tempChart.update(); });
-      socket.on('session-started', () => {
-        chartData.labels = [];
-        chartData.datasets.forEach(ds => ds.data = []);
-        globalStartTime = null;
-        tempChart.update();
-        showBanner('');
-      });
-      socket.on('session-stopped', () => showBanner('Logging stopped.'));
-    }
-
-    async function startLogging() {
-      let filename = document.getElementById('logFilename').value.trim();
-      if (filename && !filename.toLowerCase().endsWith('.csv')) filename += '.csv';
-      await fetch('/start-log', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(filename ? { filename } : {}) });
-      // Reset chart locally too (in case sockets aren’t available)
-      chartData.labels = [];
-      chartData.datasets.forEach(ds => ds.data = []);
-      globalStartTime = null;
-      tempChart.update();
-    }
-
-    async function stopLogging() {
-      await fetch('/stop-log', { method: 'POST' });
-    }
-
-    document.getElementById('startLogging').addEventListener('click', async () => {
-      await startLogging();
-=======
     let isLogging = false;
 
     document.getElementById('startLogging').addEventListener('click', () => {
       let filename = document.getElementById('logFilename').value.trim();
-=======
-    let isLogging = false;
-
-    document.getElementById('startLogging').addEventListener('click', () => {
-      let filename = document.getElementById('logFilename').value.trim();
->>>>>>> parent of 82097ca (Update to persistent data)
       if (!filename.toLowerCase().endsWith('.csv')) {
         filename += '.csv';
         document.getElementById('logFilename').value = filename;
       }
       isLogging = true;
-<<<<<<< HEAD
->>>>>>> parent of 82097ca (Update to persistent data)
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
       document.querySelector('#startLogging i').className = 'bi bi-record-fill text-danger';
       console.log('Logging started:', filename);
     });
@@ -480,31 +227,6 @@
 		  const memText = `${(data.mem_used).toFixed(1)} / ${(data.mem_total).toFixed(1)} MB`;
 		  const diskText = `${(data.disk_used / 1024 / 1024 / 1024).toFixed(2)} / ${(data.disk_total / 1024 / 1024 / 1024).toFixed(2)} GB`;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    async function fetchSystemStats() {
-      try {
-        const res = await fetch('/system-stats');
-        const data = await res.json();
-        const memText = `${(data.mem_used).toFixed(1)} / ${(data.mem_total).toFixed(1)} MB`;
-        const diskText = `${(data.disk_used / 1024 / 1024 / 1024).toFixed(2)} / ${(data.disk_total / 1024 / 1024 / 1024).toFixed(2)} GB`;
-        document.getElementById('piCpu').innerText = `${data.cpu.toFixed(2)}%`;
-        document.getElementById('piMem').innerText = memText;
-        document.getElementById('piDisk').innerText = diskText;
-        document.getElementById('piTemp').innerText = (data.temp ?? '--') + '°C';
-        updateBubble('cpuBubble', data.cpu);
-        updateBubble('memBubble', data.mem);
-      } catch {
-        document.getElementById('piCpu').innerText = '--';
-        document.getElementById('piMem').innerText = '--';
-        document.getElementById('piDisk').innerText = '--';
-        document.getElementById('piTemp').innerText = '--';
-        document.getElementById('cpuBubble').innerText = '--';
-        document.getElementById('memBubble').innerText = '--';
-      }
-=======
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
 		  document.getElementById('piCpu').innerText = `${data.cpu.toFixed(2)}%`;
 		  document.getElementById('piMem').innerText = memText;
 		  document.getElementById('piDisk').innerText = diskText;
@@ -521,75 +243,11 @@
 		  document.getElementById('cpuBubble').innerText = '--';
 		  document.getElementById('memBubble').innerText = '--';
 		});
-<<<<<<< HEAD
->>>>>>> parent of 82097ca (Update to persistent data)
     }
 	
 	setInterval(fetchSystemStats, 5000);
     fetchSystemStats()
 
-<<<<<<< HEAD
-    async function loadLogList() {
-      try {
-        const res = await fetch('/logs');
-        const files = await res.json();
-        const el = document.getElementById('logTable');
-        if (!Array.isArray(files) || files.length === 0) {
-          el.innerHTML = 'No logs yet.';
-          return;
-        }
-        el.innerHTML = files.map(f => `
-          <div class="d-flex justify-content-between align-items-center py-1">
-            <a href="/logs/${f}" class="text-decoration-none">${f}</a>
-            <div>
-              <button class="btn btn-sm btn-outline-primary me-2" data-load="${f}">Load</button>
-              <button class="btn btn-sm btn-outline-danger" data-delete="${f}">Delete</button>
-            </div>
-          </div>`).join('');
-
-        el.querySelectorAll('button[data-load]').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const f = btn.getAttribute('data-load');
-            const resp = await fetch(`/logs/${f}/json`);
-            const entries = await resp.json();
-            chartData.labels = [];
-            chartData.datasets.forEach(ds => ds.data = []);
-            globalStartTime = null;
-            entries.forEach(addEntry);
-            tempChart.update();
-            showBanner(`Loaded ${f}`);
-          });
-        });
-
-        el.querySelectorAll('button[data-delete]').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const f = btn.getAttribute('data-delete');
-            await fetch(`/logs/${f}`, { method: 'DELETE' });
-            loadLogList();
-          });
-        });
-      } catch (e) {
-        document.getElementById('logTable').textContent = 'Error loading logs.';
-      }
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
-    }
-	
-	setInterval(fetchSystemStats, 5000);
-    fetchSystemStats()
-
-<<<<<<< HEAD
-    document.addEventListener('DOMContentLoaded', async () => {
-      setupTable();
-      setupChart();
-      await fetchExistingData();
-      setupSocketIfAvailable();
-      await loadLogList();
-      fetchSystemStats();
-      setInterval(fetchSystemStats, 5000);
-=======
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
     const sensors = [
       { name: 'Chamber', color: '#6c757d' },
       { name: 'Probe 1', color: '#dc3545' },
@@ -664,10 +322,6 @@
           }
         }
       }
-<<<<<<< HEAD
->>>>>>> parent of 82097ca (Update to persistent data)
-=======
->>>>>>> parent of 82097ca (Update to persistent data)
     });
 
     const tbody = document.getElementById('tempTableBody');
